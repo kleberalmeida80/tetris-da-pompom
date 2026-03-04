@@ -157,15 +157,19 @@ export const useTetris = (callbacks?: TetrisCallbacks) => {
 
     if (linesCleared > 0) {
       const linePoints = [0, 100, 300, 500, 800];
-      setScore(prev => prev + linePoints[linesCleared] * level);
-      setLines(prev => {
-        const newLines = prev + linesCleared;
-        const newLevel = Math.min(10, Math.floor(newLines / LINES_PER_LEVEL) + 1);
+      const pointsToAdd = linePoints[linesCleared] * level;
+      
+      setScore(prevScore => {
+        const newScore = prevScore + pointsToAdd;
+        // Level up every 1000 points
+        const newLevel = Math.min(10, Math.floor(newScore / 1000) + 1);
         if (newLevel > level) {
           setLevel(newLevel);
         }
-        return newLines;
+        return newScore;
       });
+      
+      setLines(prev => prev + linesCleared);
       callbacks?.onClear?.();
     } else {
       callbacks?.onLock?.();
@@ -211,8 +215,14 @@ export const useTetris = (callbacks?: TetrisCallbacks) => {
     setLives(INITIAL_LIVES);
     setHoldPiece(null);
     setGameState('PLAYING');
+    lastTimeRef.current = performance.now();
     spawnPiece();
   };
+
+  const movePieceRef = useRef(movePiece);
+  useEffect(() => {
+    movePieceRef.current = movePiece;
+  }, [movePiece]);
 
   // Game Loop
   useEffect(() => {
@@ -223,7 +233,7 @@ export const useTetris = (callbacks?: TetrisCallbacks) => {
       const currentSpeed = Math.max(80, 800 - (level - 1) * 80);
       
       if (deltaTime > currentSpeed) {
-        movePiece({ x: 0, y: 1 });
+        movePieceRef.current({ x: 0, y: 1 });
         lastTimeRef.current = time;
       }
       dropTimeRef.current = requestAnimationFrame(tick);
@@ -233,7 +243,7 @@ export const useTetris = (callbacks?: TetrisCallbacks) => {
     return () => {
       if (dropTimeRef.current) cancelAnimationFrame(dropTimeRef.current);
     };
-  }, [gameState, level, activePiece, grid]);
+  }, [gameState, level]);
 
   return {
     grid,

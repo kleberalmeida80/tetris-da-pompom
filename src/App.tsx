@@ -60,38 +60,43 @@ export default function App() {
   return (
     <div className="h-[100dvh] bg-zinc-950 text-zinc-100 font-sans flex flex-col items-center justify-between p-1 sm:p-4 overflow-hidden touch-none">
       {/* Header Stats & Pause */}
-      <div className="w-full max-w-[350px] flex items-center gap-2 sm:mb-4 shrink-0">
-        <div className="flex-1 bg-zinc-900/50 p-1 sm:p-3 rounded-xl border border-zinc-800 flex items-center gap-2 sm:gap-3">
-          <Trophy className="text-yellow-500 w-4 h-4 sm:w-5 sm:h-5" />
+      <div className="w-full max-w-[380px] flex items-center gap-1 sm:gap-2 sm:mb-4 shrink-0">
+        <div className="flex-1 bg-zinc-900/50 p-1.5 sm:p-3 rounded-xl border border-zinc-800 flex items-center gap-1.5 sm:gap-3">
+          <Trophy className="text-yellow-500 w-3.5 h-3.5 sm:w-5 sm:h-5" />
           <div>
-            <p className="text-[8px] sm:text-[10px] uppercase tracking-wider text-zinc-500 font-bold leading-none mb-1">Pontos</p>
-            <p className="text-sm sm:text-lg font-mono leading-none">{score.toLocaleString()}</p>
+            <p className="text-[7px] sm:text-[10px] uppercase tracking-wider text-zinc-500 font-bold leading-none mb-1">Pontos</p>
+            <p className="text-xs sm:text-lg font-mono leading-none">{score.toLocaleString()}</p>
+          </div>
+        </div>
+
+        <div className="bg-zinc-900/50 p-1.5 sm:p-3 rounded-xl border border-zinc-800 flex flex-col items-center justify-center min-w-[50px] sm:min-w-[70px]">
+          <p className="text-[7px] sm:text-[10px] uppercase tracking-wider text-zinc-500 font-bold leading-none mb-1">Nível</p>
+          <p className="text-xs sm:text-lg font-mono leading-none text-indigo-400">{level}</p>
+        </div>
+
+        <div className="flex-1 bg-zinc-900/50 p-1.5 sm:p-3 rounded-xl border border-zinc-800 flex items-center gap-1.5 sm:gap-3">
+          <Heart className="text-red-500 w-3.5 h-3.5 sm:w-5 sm:h-5" />
+          <div>
+            <p className="text-[7px] sm:text-[10px] uppercase tracking-wider text-zinc-500 font-bold leading-none mb-1">Vidas</p>
+            <div className="flex gap-1">
+              {[...Array(3)].map((_, i) => (
+                <div 
+                  key={i} 
+                  className={`w-1 h-1 sm:w-2 sm:h-2 rounded-full ${i < lives ? 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]' : 'bg-zinc-800'}`} 
+                />
+              ))}
+            </div>
           </div>
         </div>
 
         {gameState === 'PLAYING' && (
           <button 
             onClick={handlePause}
-            className="p-3 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-500 hover:text-white active:scale-95 transition-all"
+            className="p-2 sm:p-3 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-500 hover:text-white active:scale-95 transition-all"
           >
-            <Pause size={20} />
+            <Pause size={18} />
           </button>
         )}
-
-        <div className="flex-1 bg-zinc-900/50 p-1 sm:p-3 rounded-xl border border-zinc-800 flex items-center gap-2 sm:gap-3">
-          <Heart className="text-red-500 w-4 h-4 sm:w-5 sm:h-5" />
-          <div>
-            <p className="text-[8px] sm:text-[10px] uppercase tracking-wider text-zinc-500 font-bold leading-none mb-1">Vidas</p>
-            <div className="flex gap-1">
-              {[...Array(3)].map((_, i) => (
-                <div 
-                  key={i} 
-                  className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${i < lives ? 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]' : 'bg-zinc-800'}`} 
-                />
-              ))}
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Main Game Area */}
