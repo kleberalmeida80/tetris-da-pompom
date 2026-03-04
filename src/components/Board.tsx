@@ -124,7 +124,7 @@ const Board: React.FC<BoardProps> = ({ grid, activePiece, level }) => {
   }, [grid, activePiece, level]);
 
   return (
-    <div className="relative border-4 border-zinc-800 rounded-lg overflow-hidden shadow-2xl bg-zinc-900 aspect-[1/2] w-full max-w-[300px] mx-auto">
+    <div className="relative border-2 sm:border-4 border-zinc-800 rounded-lg overflow-hidden shadow-2xl bg-zinc-900 aspect-[1/2] w-full max-w-[260px] sm:max-w-[300px] mx-auto">
       <canvas
         ref={canvasRef}
         width={300}

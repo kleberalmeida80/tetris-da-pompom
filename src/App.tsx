@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Play, Pause, RotateCcw, Heart, Trophy, Layers, Hash, Music, Settings as SettingsIcon, X } from 'lucide-react';
+import { Play, Pause, RotateCcw, Heart, Trophy, Layers, Hash, Music, Settings as SettingsIcon, X, Box, ArrowDownToLine } from 'lucide-react';
 import { useTetris } from './hooks/useTetris';
 import { useMusic } from './hooks/useMusic';
 import { useSoundEffects } from './hooks/useSoundEffects';
@@ -59,24 +59,34 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 font-sans flex flex-col items-center justify-center p-4 overflow-hidden touch-none">
-      {/* Header Stats */}
-      <div className="w-full max-w-[350px] grid grid-cols-2 gap-4 mb-4">
-        <div className="bg-zinc-900/50 p-3 rounded-xl border border-zinc-800 flex items-center gap-3">
-          <Trophy className="text-yellow-500 w-5 h-5" />
+      {/* Header Stats & Pause */}
+      <div className="w-full max-w-[350px] flex items-center gap-2 mb-4">
+        <div className="flex-1 bg-zinc-900/50 p-2 sm:p-3 rounded-xl border border-zinc-800 flex items-center gap-2 sm:gap-3">
+          <Trophy className="text-yellow-500 w-4 h-4 sm:w-5 sm:h-5" />
           <div>
-            <p className="text-[10px] uppercase tracking-wider text-zinc-500 font-bold">Pontos</p>
-            <p className="text-lg font-mono leading-none">{score.toLocaleString()}</p>
+            <p className="text-[8px] sm:text-[10px] uppercase tracking-wider text-zinc-500 font-bold leading-none mb-1">Pontos</p>
+            <p className="text-sm sm:text-lg font-mono leading-none">{score.toLocaleString()}</p>
           </div>
         </div>
-        <div className="bg-zinc-900/50 p-3 rounded-xl border border-zinc-800 flex items-center gap-3">
-          <Heart className="text-red-500 w-5 h-5" />
+
+        {gameState === 'PLAYING' && (
+          <button 
+            onClick={handlePause}
+            className="p-3 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-500 hover:text-white active:scale-95 transition-all"
+          >
+            <Pause size={20} />
+          </button>
+        )}
+
+        <div className="flex-1 bg-zinc-900/50 p-2 sm:p-3 rounded-xl border border-zinc-800 flex items-center gap-2 sm:gap-3">
+          <Heart className="text-red-500 w-4 h-4 sm:w-5 sm:h-5" />
           <div>
-            <p className="text-[10px] uppercase tracking-wider text-zinc-500 font-bold">Vidas</p>
+            <p className="text-[8px] sm:text-[10px] uppercase tracking-wider text-zinc-500 font-bold leading-none mb-1">Vidas</p>
             <div className="flex gap-1">
               {[...Array(3)].map((_, i) => (
                 <div 
                   key={i} 
-                  className={`w-2 h-2 rounded-full ${i < lives ? 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]' : 'bg-zinc-800'}`} 
+                  className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${i < lives ? 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]' : 'bg-zinc-800'}`} 
                 />
               ))}
             </div>
@@ -85,15 +95,14 @@ export default function App() {
       </div>
 
       {/* Main Game Area */}
-      <div className="relative flex gap-4 items-start">
-        {/* Left Side: Hold */}
-        <div className="hidden sm:flex flex-col gap-4">
-          <div className="bg-zinc-900/50 p-3 rounded-xl border border-zinc-800 w-24">
-            <p className="text-[10px] uppercase tracking-wider text-zinc-500 font-bold mb-2">Segurar</p>
+      <div className="relative flex gap-2 sm:gap-4 items-center">
+        {/* Left Side: Hold & Action */}
+        <div className="flex flex-col gap-4 items-center">
+          <div className="bg-zinc-900/50 p-2 rounded-xl border border-zinc-800 w-16 sm:w-20">
+            <p className="text-[8px] sm:text-[9px] uppercase tracking-wider text-zinc-500 font-bold mb-2 text-center">Hold</p>
             <div className="aspect-square bg-zinc-950 rounded-lg border border-zinc-800 flex items-center justify-center">
               {holdPiece && (
-                <div className="scale-75 origin-center">
-                  {/* Simple preview logic */}
+                <div className="scale-[0.4] sm:scale-50 origin-center">
                   <div className="grid grid-cols-4 gap-1">
                     {holdPiece.tetromino.shape.flat().map((v: number, i: number) => (
                       <div key={i} className={`w-3 h-3 rounded-sm ${v ? '' : 'opacity-0'}`} style={{ backgroundColor: holdPiece.tetromino.color }} />
@@ -103,18 +112,27 @@ export default function App() {
               )}
             </div>
           </div>
+
+          {gameState === 'PLAYING' && (
+            <button 
+              onClick={handleHold}
+              className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-b from-zinc-700 to-zinc-900 flex items-center justify-center active:from-zinc-800 active:to-zinc-950 active:scale-90 transition-all shadow-[0_4px_0_0_#18181b,0_8px_15px_rgba(0,0,0,0.4)] border-t border-zinc-500/30"
+            >
+              <Box className="text-zinc-300 w-5 h-5 sm:w-6 sm:h-6 drop-shadow-md" />
+            </button>
+          )}
         </div>
 
         {/* Center: Board */}
         <Board grid={grid} activePiece={activePiece} level={level} />
 
-        {/* Right Side: Next & Stats */}
-        <div className="flex flex-col gap-4">
-          <div className="bg-zinc-900/50 p-3 rounded-xl border border-zinc-800 w-24">
-            <p className="text-[10px] uppercase tracking-wider text-zinc-500 font-bold mb-2">Próximo</p>
+        {/* Right Side: Next & Actions */}
+        <div className="flex flex-col gap-3 sm:gap-4 items-center">
+          <div className="bg-zinc-900/50 p-2 rounded-xl border border-zinc-800 w-16 sm:w-24">
+            <p className="text-[8px] sm:text-[9px] uppercase tracking-wider text-zinc-500 font-bold mb-2 text-center">Next</p>
             <div className="aspect-square bg-zinc-950 rounded-lg border border-zinc-800 flex items-center justify-center">
               {nextPiece && (
-                <div className="scale-75 origin-center">
+                <div className="scale-[0.4] sm:scale-75 origin-center">
                    <div className="grid grid-cols-4 gap-1">
                     {nextPiece.tetromino.shape.flat().map((v: number, i: number) => (
                       <div key={i} className={`w-3 h-3 rounded-sm ${v ? '' : 'opacity-0'}`} style={{ backgroundColor: nextPiece.tetromino.color }} />
@@ -125,16 +143,22 @@ export default function App() {
             </div>
           </div>
 
-          <div className="bg-zinc-900/50 p-3 rounded-xl border border-zinc-800 w-24">
-            <div className="mb-3">
-              <p className="text-[10px] uppercase tracking-wider text-zinc-500 font-bold">Nível</p>
-              <p className="text-xl font-mono">{level}</p>
-            </div>
-            <div>
-              <p className="text-[10px] uppercase tracking-wider text-zinc-500 font-bold">Linhas</p>
-              <p className="text-xl font-mono">{lines}</p>
-            </div>
-          </div>
+          {gameState === 'PLAYING' && (
+            <>
+              <button 
+                onClick={rotatePiece}
+                className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-b from-indigo-500 to-indigo-700 flex items-center justify-center active:from-indigo-600 active:to-indigo-800 active:scale-90 transition-all shadow-[0_4px_0_0_#312e81,0_8px_15px_rgba(79,70,229,0.3)] border-t border-indigo-400/50"
+              >
+                <RotateCcw className="text-white w-5 h-5 sm:w-6 sm:h-6 drop-shadow-md" />
+              </button>
+              <button 
+                onClick={hardDrop}
+                className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-b from-emerald-500 to-emerald-700 flex items-center justify-center active:from-emerald-600 active:to-emerald-800 active:scale-90 transition-all shadow-[0_4px_0_0_#064e3b,0_8px_15px_rgba(16,185,129,0.3)] border-t border-emerald-400/50"
+              >
+                <ArrowDownToLine className="text-white w-5 h-5 sm:w-6 sm:h-6 drop-shadow-md" />
+              </button>
+            </>
+          )}
         </div>
 
         {/* Overlay Screens */}
@@ -268,31 +292,12 @@ export default function App() {
       </div>
 
       {/* Controls Section */}
-      <div className="w-full flex flex-col items-center">
+      <div className="w-full mt-auto">
         {gameState === 'PLAYING' && (
           <Controls 
             onMove={movePiece} 
-            onRotate={rotatePiece} 
-            onHardDrop={hardDrop}
-            onHold={handleHold}
           />
         )}
-        
-        {/* Pause Button */}
-        {gameState === 'PLAYING' && (
-          <button 
-            onClick={handlePause}
-            className="mt-8 p-3 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-500 active:text-white transition-colors"
-          >
-            <Pause size={20} />
-          </button>
-        )}
-      </div>
-
-      {/* Mobile Footer Hints */}
-      <div className="mt-auto pt-4 text-[10px] text-zinc-600 flex gap-4 uppercase tracking-widest">
-        <span className="flex items-center gap-1"><Layers size={10} /> Nível {level}</span>
-        <span className="flex items-center gap-1"><Hash size={10} /> {lines} Linhas</span>
       </div>
     </div>
   );

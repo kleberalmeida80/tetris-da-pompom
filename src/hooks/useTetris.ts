@@ -160,8 +160,9 @@ export const useTetris = (callbacks?: TetrisCallbacks) => {
       setScore(prev => prev + linePoints[linesCleared] * level);
       setLines(prev => {
         const newLines = prev + linesCleared;
-        if (Math.floor(newLines / LINES_PER_LEVEL) > Math.floor(prev / LINES_PER_LEVEL)) {
-          setLevel(l => l + 1);
+        const newLevel = Math.min(10, Math.floor(newLines / LINES_PER_LEVEL) + 1);
+        if (newLevel > level) {
+          setLevel(newLevel);
         }
         return newLines;
       });
@@ -219,9 +220,9 @@ export const useTetris = (callbacks?: TetrisCallbacks) => {
 
     const tick = (time: number) => {
       const deltaTime = time - lastTimeRef.current;
-      const speed = Math.max(100, 1000 - (level - 1) * 100);
+      const currentSpeed = Math.max(80, 800 - (level - 1) * 80);
       
-      if (deltaTime > speed) {
+      if (deltaTime > currentSpeed) {
         movePiece({ x: 0, y: 1 });
         lastTimeRef.current = time;
       }

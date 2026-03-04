@@ -3,12 +3,9 @@ import { ChevronLeft, ChevronRight, ChevronDown, RotateCcw, ArrowDownToLine, Box
 
 interface ControlsProps {
   onMove: (dir: { x: number, y: number }) => void;
-  onRotate: () => void;
-  onHardDrop: () => void;
-  onHold: () => void;
 }
 
-const Controls: React.FC<ControlsProps> = ({ onMove, onRotate, onHardDrop, onHold }) => {
+const Controls: React.FC<ControlsProps> = ({ onMove }) => {
   const touchStartRef = useRef<{ x: number, y: number } | null>(null);
   const lastMoveRef = useRef<number>(0);
 
@@ -45,60 +42,33 @@ const Controls: React.FC<ControlsProps> = ({ onMove, onRotate, onHardDrop, onHol
 
   return (
     <div 
-      className="mt-6 grid grid-cols-3 gap-4 w-full max-w-[350px] mx-auto select-none"
+      className="mt-4 sm:mt-6 grid grid-cols-3 gap-3 sm:gap-4 w-full max-w-[280px] sm:max-w-[320px] mx-auto select-none px-2 pb-6"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      {/* Top Row */}
-      <div className="flex justify-center">
-        <button 
-          onClick={onHold}
-          className="w-16 h-16 rounded-full bg-zinc-800 flex items-center justify-center active:bg-zinc-700 active:scale-95 transition-all shadow-lg border border-zinc-700"
-        >
-          <Box className="text-zinc-400" />
-        </button>
-      </div>
-      <div className="flex justify-center">
-        <button 
-          onClick={onRotate}
-          className="w-16 h-16 rounded-full bg-indigo-600 flex items-center justify-center active:bg-indigo-500 active:scale-95 transition-all shadow-lg border border-indigo-500"
-        >
-          <RotateCcw className="text-white" />
-        </button>
-      </div>
-      <div className="flex justify-center">
-        <button 
-          onClick={onHardDrop}
-          className="w-16 h-16 rounded-full bg-emerald-600 flex items-center justify-center active:bg-emerald-500 active:scale-95 transition-all shadow-lg border border-emerald-500"
-        >
-          <ArrowDownToLine className="text-white" />
-        </button>
-      </div>
-
-      {/* Bottom Row - D-Pad Style */}
       <div className="flex justify-center">
         <button 
           onClick={() => onMove({ x: -1, y: 0 })}
-          className="w-16 h-16 rounded-2xl bg-zinc-800 flex items-center justify-center active:bg-zinc-700 active:scale-95 transition-all shadow-lg border border-zinc-700"
+          className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-b from-zinc-700 to-zinc-900 flex items-center justify-center active:from-zinc-800 active:to-zinc-950 active:scale-90 transition-all shadow-[0_4px_0_0_#18181b,0_8px_15px_rgba(0,0,0,0.4)] border-t border-zinc-500/30"
         >
-          <ChevronLeft className="text-zinc-300" />
+          <ChevronLeft className="text-zinc-200 w-6 h-6 sm:w-8 sm:h-8 drop-shadow-md" />
         </button>
       </div>
       <div className="flex justify-center">
         <button 
           onClick={() => onMove({ x: 0, y: 1 })}
-          className="w-16 h-16 rounded-2xl bg-zinc-800 flex items-center justify-center active:bg-zinc-700 active:scale-95 transition-all shadow-lg border border-zinc-700"
+          className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-b from-zinc-700 to-zinc-900 flex items-center justify-center active:from-zinc-800 active:to-zinc-950 active:scale-90 transition-all shadow-[0_4px_0_0_#18181b,0_8px_15px_rgba(0,0,0,0.4)] border-t border-zinc-500/30"
         >
-          <ChevronDown className="text-zinc-300" />
+          <ChevronDown className="text-zinc-200 w-6 h-6 sm:w-8 sm:h-8 drop-shadow-md" />
         </button>
       </div>
       <div className="flex justify-center">
         <button 
           onClick={() => onMove({ x: 1, y: 0 })}
-          className="w-16 h-16 rounded-2xl bg-zinc-800 flex items-center justify-center active:bg-zinc-700 active:scale-95 transition-all shadow-lg border border-zinc-700"
+          className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-b from-zinc-700 to-zinc-900 flex items-center justify-center active:from-zinc-800 active:to-zinc-950 active:scale-90 transition-all shadow-[0_4px_0_0_#18181b,0_8px_15px_rgba(0,0,0,0.4)] border-t border-zinc-500/30"
         >
-          <ChevronRight className="text-zinc-300" />
+          <ChevronRight className="text-zinc-200 w-6 h-6 sm:w-8 sm:h-8 drop-shadow-md" />
         </button>
       </div>
     </div>
