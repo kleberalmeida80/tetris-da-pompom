@@ -47,7 +47,7 @@ export const useTetris = (callbacks?: TetrisCallbacks) => {
     setCanHold(true);
   }, [nextPiece, grid]);
 
-  const handleGameOver = () => {
+  const handleGameOver = useCallback(() => {
     if (lives > 1) {
       setLives(prev => prev - 1);
       resetLevel();
@@ -56,9 +56,9 @@ export const useTetris = (callbacks?: TetrisCallbacks) => {
       setGameState('GAMEOVER');
       callbacks?.onGameOver?.();
     }
-  };
+  }, [lives, callbacks]);
 
-  const resetLevel = () => {
+  const resetLevel = useCallback(() => {
     setGrid(createEmptyGrid(ROWS, COLS));
     setActivePiece(null);
     // Add garbage if level >= 3
@@ -76,7 +76,7 @@ export const useTetris = (callbacks?: TetrisCallbacks) => {
       });
     }
     spawnPiece();
-  };
+  }, [level, spawnPiece]);
 
   const checkCollision = (piece: any, grid: any[][], move: { x: number, y: number }) => {
     for (let y = 0; y < piece.tetromino.shape.length; y++) {
@@ -98,37 +98,7 @@ export const useTetris = (callbacks?: TetrisCallbacks) => {
     return false;
   };
 
-  const movePiece = (dir: { x: number, y: number }) => {
-    if (!activePiece || gameState !== 'PLAYING') return;
-    if (!checkCollision(activePiece, grid, dir)) {
-      setActivePiece((prev: any) => ({
-        ...prev,
-        pos: { x: prev.pos.x + dir.x, y: prev.pos.y + dir.y }
-      }));
-    } else if (dir.y > 0) {
-      // Collision below
-      lockPiece();
-    }
-  };
-
-  const rotatePiece = () => {
-    if (!activePiece || gameState !== 'PLAYING') return;
-    const clonedPiece = JSON.parse(JSON.stringify(activePiece));
-    clonedPiece.tetromino.shape = rotate(clonedPiece.tetromino.shape);
-    
-    // Simple wall kick
-    let offset = 0;
-    while (checkCollision(clonedPiece, grid, { x: offset, y: 0 })) {
-      offset += offset >= 0 ? -1 : 1;
-      if (Math.abs(offset) > 2) return; // Can't rotate
-    }
-    
-    clonedPiece.pos.x += offset;
-    setActivePiece(clonedPiece);
-    callbacks?.onRotate?.();
-  };
-
-  const lockPiece = () => {
+  const lockPiece = useCallback(() => {
     if (!activePiece) return;
     const newGrid = [...grid];
     activePiece.tetromino.shape.forEach((row: any, y: any) => {
@@ -177,19 +147,92 @@ export const useTetris = (callbacks?: TetrisCallbacks) => {
 
     setGrid(filteredGrid);
     spawnPiece();
-  };
+  }, [activePiece, grid, level, spawnPiece, callbacks]);
 
-  const hardDrop = () => {
+  const movePiece = useCallback((dir: { x: number, y: number }) => {
+    if (!activePiece || gameState !== 'PLAYING') return;
+    if (!checkCollision(activePiece, grid, dir)) {
+      setActivePiece((prev: any) => ({
+        ...prev,
+        pos: { x: prev.pos.x + dir.x, y: prev.pos.y + dir.y }
+      }));
+    } else if (dir.y > 0) {
+      // Collision below
+      lockPiece();
+    }
+  }, [activePiece, grid, gameState, lockPiece]);
+
+  const rotatePiece = useCallback(() => {
+    if (!activePiece || gameState !== 'PLAYING') return;
+    const clonedPiece = JSON.parse(JSON.stringify(activePiece));
+    clonedPiece.tetromino.shape = rotate(clonedPiece.tetromino.shape);
+    
+    // Simple wall kick
+    let offset = 0;
+    while (checkCollision(clonedPiece, grid, { x: offset, y: 0 })) {
+      offset += offset >= 0 ? -1 : 1;
+      if (Math.abs(offset) > 2) return; // Can't rotate
+    }
+    
+    clonedPiece.pos.x += offset;
+    setActivePiece(clonedPiece);
+    callbacks?.onRotate?.();
+  }, [activePiece, grid, gameState, callbacks]);
+
+  const hardDrop = useCallback(() => {
     if (!activePiece || gameState !== 'PLAYING') return;
     let dropY = 0;
     while (!checkCollision(activePiece, grid, { x: 0, y: dropY + 1 })) {
       dropY++;
     }
-    movePiece({ x: 0, y: dropY });
-    lockPiece();
-  };
+    
+    // Update position and lock immediately
+    const lockedPiece = {
+      ...activePiece,
+      pos: { x: activePiece.pos.x, y: activePiece.pos.y + dropY }
+    };
+    
+    // We need to perform the lock logic with this specific piece
+    const newGrid = [...grid];
+    lockedPiece.tetromino.shape.forEach((row: any, y: any) => {
+      row.forEach((value: any, x: any) => {
+        if (value !== 0) {
+          const gridY = lockedPiece.pos.y + y;
+          const gridX = lockedPiece.pos.x + x;
+          if (gridY >= 0) {
+            newGrid[gridY][gridX] = lockedPiece.tetromino.color;
+          }
+        }
+      });
+    });
 
-  const handleHold = () => {
+    // Clear lines logic (duplicated for performance to avoid multiple state updates)
+    let linesCleared = 0;
+    const filteredGrid = newGrid.filter(row => {
+      const isFull = row.every(cell => cell !== 0);
+      if (isFull) linesCleared++;
+      return !isFull;
+    });
+
+    while (filteredGrid.length < ROWS) {
+      filteredGrid.unshift(Array(COLS).fill(0));
+    }
+
+    if (linesCleared > 0) {
+      const linePoints = [0, 100, 300, 500, 800];
+      const pointsToAdd = linePoints[linesCleared] * level;
+      setScore(prev => prev + pointsToAdd);
+      setLines(prev => prev + linesCleared);
+      callbacks?.onClear?.();
+    } else {
+      callbacks?.onLock?.();
+    }
+
+    setGrid(filteredGrid);
+    spawnPiece();
+  }, [activePiece, grid, level, spawnPiece, callbacks]);
+
+  const handleHold = useCallback(() => {
     if (!canHold || gameState !== 'PLAYING') return;
     const currentType = activePiece.tetromino.type;
     if (holdPiece) {
@@ -205,7 +248,7 @@ export const useTetris = (callbacks?: TetrisCallbacks) => {
       spawnPiece();
     }
     setCanHold(false);
-  };
+  }, [canHold, gameState, activePiece, holdPiece, spawnPiece]);
 
   const startGame = () => {
     setGrid(createEmptyGrid(ROWS, COLS));

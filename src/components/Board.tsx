@@ -67,11 +67,23 @@ const Board: React.FC<BoardProps> = ({ grid, activePiece, level }) => {
     grid.forEach((row, y) => {
       row.forEach((cell, x) => {
         if (cell !== 0) {
-          ctx.fillStyle = cell === 'garbage' ? COLORS.garbage : cell;
-          ctx.fillRect(x * blockSize + 1, y * blockSize + 1, blockSize - 2, blockSize - 2);
-          // Highlight
-          ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
-          ctx.fillRect(x * blockSize + 1, y * blockSize + 1, blockSize - 2, (blockSize - 2) / 3);
+          const color = cell === 'garbage' ? COLORS.garbage : cell;
+          ctx.fillStyle = color;
+          
+          // Draw block with rounded corners (simulated)
+          const r = 2;
+          ctx.beginPath();
+          ctx.roundRect(x * blockSize + 1, y * blockSize + 1, blockSize - 2, blockSize - 2, r);
+          ctx.fill();
+
+          // Highlight/Shine
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+          ctx.fillRect(x * blockSize + 2, y * blockSize + 2, blockSize - 4, (blockSize - 4) / 3);
+          
+          // Subtle inner shadow
+          ctx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
+          ctx.lineWidth = 1;
+          ctx.strokeRect(x * blockSize + 1, y * blockSize + 1, blockSize - 2, blockSize - 2);
         }
       });
     });
@@ -81,18 +93,26 @@ const Board: React.FC<BoardProps> = ({ grid, activePiece, level }) => {
       const ghostPos = getGhostPos();
       if (ghostPos) {
         ctx.fillStyle = COLORS.ghost;
+        ctx.strokeStyle = activePiece.tetromino.color;
+        ctx.lineWidth = 1;
+        ctx.setLineDash([2, 2]);
+        
         activePiece.tetromino.shape.forEach((row: any, y: any) => {
           row.forEach((value: any, x: any) => {
             if (value !== 0) {
-              ctx.fillRect(
-                (ghostPos.x + x) * blockSize + 1,
-                (ghostPos.y + y) * blockSize + 1,
-                blockSize - 2,
-                blockSize - 2
-              );
+              const px = (ghostPos.x + x) * blockSize + 2;
+              const py = (ghostPos.y + y) * blockSize + 2;
+              const pw = blockSize - 4;
+              const ph = blockSize - 4;
+              
+              ctx.strokeRect(px, py, pw, ph);
+              ctx.globalAlpha = 0.1;
+              ctx.fillRect(px, py, pw, ph);
+              ctx.globalAlpha = 1.0;
             }
           });
         });
+        ctx.setLineDash([]);
       }
     }
 
@@ -102,21 +122,25 @@ const Board: React.FC<BoardProps> = ({ grid, activePiece, level }) => {
       activePiece.tetromino.shape.forEach((row: any, y: any) => {
         row.forEach((value: any, x: any) => {
           if (value !== 0) {
-            ctx.fillRect(
-              (activePiece.pos.x + x) * blockSize + 1,
-              (activePiece.pos.y + y) * blockSize + 1,
-              blockSize - 2,
-              blockSize - 2
-            );
-            // Highlight
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
-            ctx.fillRect(
-              (activePiece.pos.x + x) * blockSize + 1,
-              (activePiece.pos.y + y) * blockSize + 1,
-              blockSize - 2,
-              (blockSize - 2) / 3
-            );
+            const px = (activePiece.pos.x + x) * blockSize + 1;
+            const py = (activePiece.pos.y + y) * blockSize + 1;
+            const pw = blockSize - 2;
+            const ph = blockSize - 2;
+
+            // Block body
             ctx.fillStyle = activePiece.tetromino.color;
+            ctx.beginPath();
+            ctx.roundRect(px, py, pw, ph, 2);
+            ctx.fill();
+
+            // Subtle border instead of glow
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(px + 1, py + 1, pw - 2, ph - 2);
+
+            // Highlight
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.fillRect(px + 1, py + 1, pw - 2, (ph - 2) / 3);
           }
         });
       });
@@ -124,7 +148,7 @@ const Board: React.FC<BoardProps> = ({ grid, activePiece, level }) => {
   }, [grid, activePiece, level]);
 
   return (
-    <div className="relative border-2 sm:border-4 border-zinc-800 rounded-lg overflow-hidden shadow-2xl bg-zinc-900 h-full aspect-[1/2] mx-auto">
+    <div className="relative border-2 sm:border-4 border-zinc-800 rounded-lg overflow-hidden shadow-2xl bg-zinc-900 h-full aspect-[1/2] mx-auto will-change-transform">
       <canvas
         ref={canvasRef}
         width={300}
