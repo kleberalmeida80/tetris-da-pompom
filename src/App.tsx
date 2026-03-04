@@ -58,10 +58,10 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100 font-sans flex flex-col items-center justify-center p-4 overflow-hidden touch-none">
+    <div className="h-[100dvh] bg-zinc-950 text-zinc-100 font-sans flex flex-col items-center justify-between p-1 sm:p-4 overflow-hidden touch-none">
       {/* Header Stats & Pause */}
-      <div className="w-full max-w-[350px] flex items-center gap-2 mb-4">
-        <div className="flex-1 bg-zinc-900/50 p-2 sm:p-3 rounded-xl border border-zinc-800 flex items-center gap-2 sm:gap-3">
+      <div className="w-full max-w-[350px] flex items-center gap-2 sm:mb-4 shrink-0">
+        <div className="flex-1 bg-zinc-900/50 p-1 sm:p-3 rounded-xl border border-zinc-800 flex items-center gap-2 sm:gap-3">
           <Trophy className="text-yellow-500 w-4 h-4 sm:w-5 sm:h-5" />
           <div>
             <p className="text-[8px] sm:text-[10px] uppercase tracking-wider text-zinc-500 font-bold leading-none mb-1">Pontos</p>
@@ -78,7 +78,7 @@ export default function App() {
           </button>
         )}
 
-        <div className="flex-1 bg-zinc-900/50 p-2 sm:p-3 rounded-xl border border-zinc-800 flex items-center gap-2 sm:gap-3">
+        <div className="flex-1 bg-zinc-900/50 p-1 sm:p-3 rounded-xl border border-zinc-800 flex items-center gap-2 sm:gap-3">
           <Heart className="text-red-500 w-4 h-4 sm:w-5 sm:h-5" />
           <div>
             <p className="text-[8px] sm:text-[10px] uppercase tracking-wider text-zinc-500 font-bold leading-none mb-1">Vidas</p>
@@ -95,14 +95,14 @@ export default function App() {
       </div>
 
       {/* Main Game Area */}
-      <div className="relative flex gap-2 sm:gap-4 items-center">
+      <div className="relative flex gap-1 sm:gap-4 items-center justify-center flex-1 min-h-0 w-full overflow-hidden">
         {/* Left Side: Hold & Action */}
-        <div className="flex flex-col gap-4 items-center">
-          <div className="bg-zinc-900/50 p-2 rounded-xl border border-zinc-800 w-16 sm:w-20">
-            <p className="text-[8px] sm:text-[9px] uppercase tracking-wider text-zinc-500 font-bold mb-2 text-center">Hold</p>
+        <div className="flex flex-col gap-2 sm:gap-4 items-center shrink-0 py-1">
+          <div className="bg-zinc-900/50 p-1 sm:p-2 rounded-xl border border-zinc-800 w-12 sm:w-20">
+            <p className="text-[6px] sm:text-[9px] uppercase tracking-wider text-zinc-500 font-bold mb-1 text-center">Hold</p>
             <div className="aspect-square bg-zinc-950 rounded-lg border border-zinc-800 flex items-center justify-center">
               {holdPiece && (
-                <div className="scale-[0.4] sm:scale-50 origin-center">
+                <div className="scale-[0.3] sm:scale-50 origin-center">
                   <div className="grid grid-cols-4 gap-1">
                     {holdPiece.tetromino.shape.flat().map((v: number, i: number) => (
                       <div key={i} className={`w-3 h-3 rounded-sm ${v ? '' : 'opacity-0'}`} style={{ backgroundColor: holdPiece.tetromino.color }} />
@@ -116,23 +116,25 @@ export default function App() {
           {gameState === 'PLAYING' && (
             <button 
               onClick={handleHold}
-              className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-b from-zinc-700 to-zinc-900 flex items-center justify-center active:from-zinc-800 active:to-zinc-950 active:scale-90 transition-all shadow-[0_4px_0_0_#18181b,0_8px_15px_rgba(0,0,0,0.4)] border-t border-zinc-500/30"
+              className="w-10 h-10 sm:w-14 sm:h-14 rounded-full bg-gradient-to-b from-zinc-700 to-zinc-900 flex items-center justify-center active:from-zinc-800 active:to-zinc-950 active:scale-90 transition-all shadow-[0_4px_0_0_#18181b,0_8px_15px_rgba(0,0,0,0.4)] border-t border-zinc-500/30"
             >
-              <Box className="text-zinc-300 w-5 h-5 sm:w-6 sm:h-6 drop-shadow-md" />
+              <Box className="text-zinc-300 w-4 h-4 sm:w-6 sm:h-6 drop-shadow-md" />
             </button>
           )}
         </div>
 
         {/* Center: Board */}
-        <Board grid={grid} activePiece={activePiece} level={level} />
+        <div className="flex-1 h-full max-w-[240px] sm:max-w-[300px] flex items-center justify-center">
+          <Board grid={grid} activePiece={activePiece} level={level} />
+        </div>
 
         {/* Right Side: Next & Actions */}
-        <div className="flex flex-col gap-3 sm:gap-4 items-center">
-          <div className="bg-zinc-900/50 p-2 rounded-xl border border-zinc-800 w-16 sm:w-24">
-            <p className="text-[8px] sm:text-[9px] uppercase tracking-wider text-zinc-500 font-bold mb-2 text-center">Next</p>
+        <div className="flex flex-col gap-2 sm:gap-4 items-center shrink-0 py-1">
+          <div className="bg-zinc-900/50 p-1 sm:p-2 rounded-xl border border-zinc-800 w-12 sm:w-24">
+            <p className="text-[6px] sm:text-[9px] uppercase tracking-wider text-zinc-500 font-bold mb-1 text-center">Next</p>
             <div className="aspect-square bg-zinc-950 rounded-lg border border-zinc-800 flex items-center justify-center">
               {nextPiece && (
-                <div className="scale-[0.4] sm:scale-75 origin-center">
+                <div className="scale-[0.3] sm:scale-75 origin-center">
                    <div className="grid grid-cols-4 gap-1">
                     {nextPiece.tetromino.shape.flat().map((v: number, i: number) => (
                       <div key={i} className={`w-3 h-3 rounded-sm ${v ? '' : 'opacity-0'}`} style={{ backgroundColor: nextPiece.tetromino.color }} />
@@ -144,20 +146,20 @@ export default function App() {
           </div>
 
           {gameState === 'PLAYING' && (
-            <>
+            <div className="flex flex-col gap-2 sm:gap-4">
               <button 
                 onClick={rotatePiece}
-                className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-b from-indigo-500 to-indigo-700 flex items-center justify-center active:from-indigo-600 active:to-indigo-800 active:scale-90 transition-all shadow-[0_4px_0_0_#312e81,0_8px_15px_rgba(79,70,229,0.3)] border-t border-indigo-400/50"
+                className="w-10 h-10 sm:w-14 sm:h-14 rounded-full bg-gradient-to-b from-indigo-500 to-indigo-700 flex items-center justify-center active:from-indigo-600 active:to-indigo-800 active:scale-90 transition-all shadow-[0_4px_0_0_#312e81,0_8px_15px_rgba(79,70,229,0.3)] border-t border-indigo-400/50"
               >
-                <RotateCcw className="text-white w-5 h-5 sm:w-6 sm:h-6 drop-shadow-md" />
+                <RotateCcw className="text-white w-4 h-4 sm:w-6 sm:h-6 drop-shadow-md" />
               </button>
               <button 
                 onClick={hardDrop}
-                className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-b from-emerald-500 to-emerald-700 flex items-center justify-center active:from-emerald-600 active:to-emerald-800 active:scale-90 transition-all shadow-[0_4px_0_0_#064e3b,0_8px_15px_rgba(16,185,129,0.3)] border-t border-emerald-400/50"
+                className="w-10 h-10 sm:w-14 sm:h-14 rounded-full bg-gradient-to-b from-emerald-500 to-emerald-700 flex items-center justify-center active:from-emerald-600 active:to-emerald-800 active:scale-90 transition-all shadow-[0_4px_0_0_#064e3b,0_8px_15px_rgba(16,185,129,0.3)] border-t border-emerald-400/50"
               >
-                <ArrowDownToLine className="text-white w-5 h-5 sm:w-6 sm:h-6 drop-shadow-md" />
+                <ArrowDownToLine className="text-white w-4 h-4 sm:w-6 sm:h-6 drop-shadow-md" />
               </button>
-            </>
+            </div>
           )}
         </div>
 
@@ -292,7 +294,7 @@ export default function App() {
       </div>
 
       {/* Controls Section */}
-      <div className="w-full mt-auto">
+      <div className="w-full shrink-0">
         {gameState === 'PLAYING' && (
           <Controls 
             onMove={movePiece} 

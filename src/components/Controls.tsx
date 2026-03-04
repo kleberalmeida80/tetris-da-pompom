@@ -42,7 +42,7 @@ const Controls: React.FC<ControlsProps> = ({ onMove }) => {
 
   return (
     <div 
-      className="mt-4 sm:mt-6 grid grid-cols-3 gap-3 sm:gap-4 w-full max-w-[280px] sm:max-w-[320px] mx-auto select-none px-2 pb-6"
+      className="mt-1 sm:mt-6 grid grid-cols-3 gap-3 sm:gap-4 w-full max-w-[240px] sm:max-w-[320px] mx-auto select-none px-2 pb-2 sm:pb-6"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
@@ -50,25 +50,25 @@ const Controls: React.FC<ControlsProps> = ({ onMove }) => {
       <div className="flex justify-center">
         <button 
           onClick={() => onMove({ x: -1, y: 0 })}
-          className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-b from-zinc-700 to-zinc-900 flex items-center justify-center active:from-zinc-800 active:to-zinc-950 active:scale-90 transition-all shadow-[0_4px_0_0_#18181b,0_8px_15px_rgba(0,0,0,0.4)] border-t border-zinc-500/30"
+          className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-b from-zinc-700 to-zinc-900 flex items-center justify-center active:from-zinc-800 active:to-zinc-950 active:scale-90 transition-all shadow-[0_4px_0_0_#18181b,0_8px_15px_rgba(0,0,0,0.4)] border-t border-zinc-500/30"
         >
-          <ChevronLeft className="text-zinc-200 w-6 h-6 sm:w-8 sm:h-8 drop-shadow-md" />
+          <ChevronLeft className="text-zinc-200 w-5 h-5 sm:w-8 sm:h-8 drop-shadow-md" />
         </button>
       </div>
       <div className="flex justify-center">
         <button 
           onClick={() => onMove({ x: 0, y: 1 })}
-          className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-b from-zinc-700 to-zinc-900 flex items-center justify-center active:from-zinc-800 active:to-zinc-950 active:scale-90 transition-all shadow-[0_4px_0_0_#18181b,0_8px_15px_rgba(0,0,0,0.4)] border-t border-zinc-500/30"
+          className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-b from-zinc-700 to-zinc-900 flex items-center justify-center active:from-zinc-800 active:to-zinc-950 active:scale-90 transition-all shadow-[0_4px_0_0_#18181b,0_8px_15px_rgba(0,0,0,0.4)] border-t border-zinc-500/30"
         >
-          <ChevronDown className="text-zinc-200 w-6 h-6 sm:w-8 sm:h-8 drop-shadow-md" />
+          <ChevronDown className="text-zinc-200 w-5 h-5 sm:w-8 sm:h-8 drop-shadow-md" />
         </button>
       </div>
       <div className="flex justify-center">
         <button 
           onClick={() => onMove({ x: 1, y: 0 })}
-          className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-b from-zinc-700 to-zinc-900 flex items-center justify-center active:from-zinc-800 active:to-zinc-950 active:scale-90 transition-all shadow-[0_4px_0_0_#18181b,0_8px_15px_rgba(0,0,0,0.4)] border-t border-zinc-500/30"
+          className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-b from-zinc-700 to-zinc-900 flex items-center justify-center active:from-zinc-800 active:to-zinc-950 active:scale-90 transition-all shadow-[0_4px_0_0_#18181b,0_8px_15px_rgba(0,0,0,0.4)] border-t border-zinc-500/30"
         >
-          <ChevronRight className="text-zinc-200 w-6 h-6 sm:w-8 sm:h-8 drop-shadow-md" />
+          <ChevronRight className="text-zinc-200 w-5 h-5 sm:w-8 sm:h-8 drop-shadow-md" />
         </button>
       </div>
     </div>
